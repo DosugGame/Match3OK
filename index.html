@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en-us">
   <head>
+     <!-- OK SDK -->
+     <script  src="https://api.ok.ru/js/fapi5.js" defer="defer"></script>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -8,14 +10,14 @@
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
 
-     <!-- OK SDK -->
-     <script  src="https://api.ok.ru/js/fapi5.js" defer="defer"></script>
+    
      
 
   
 
   </head>
   <body class="light">
+    
     <div id="unity-container" class="unity-desktop">
       <canvas id="unity-canvas"></canvas>
     </div>
@@ -105,6 +107,45 @@ if (lockFunction.call(window.screen.orientation, 'landscape')) {
       };
       document.body.appendChild(script);
 
+    </script>
+    <script type="text/javascript">
+
+     var rParams = FAPI.Util.getRequestParameters();
+     FAPI.init(rParams["api_server"], rParams["apiconnection"],
+         
+          function() {
+              
+              console.log('Bad');
+              loadRewardedAd();
+              
+          },
+         
+          function(error) {
+              console.log('Good');
+          }
+);
+
+    
+
+
+
+      function loadRewardedAd() {
+      FAPI.UI.loadAd();
+      }
+
+     
+
+      function showFullscrenAd(){
+        FAPI.UI.showAd();
+      }
+
+      function showRewardedAd(){
+        FAPI.UI.showLoadedAd().then(data => {
+          console.log('ads ok');
+          unityI.SendMessage('OKSDK', 'RewardGetting');
+          loadRewardedAd();
+          })
+      }
     </script>
   </body>
 </html>
