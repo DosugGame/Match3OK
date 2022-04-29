@@ -1,18 +1,57 @@
 <!DOCTYPE html>
-<html lang="en-us">
+
+  <html lang="en-us">
   <head>
-    
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Match3</title>
+    <title>{{{ PRODUCT_NAME }}}</title>
     <link rel="shortcut icon" href="TemplateData/favicon.ico">
     <link rel="stylesheet" href="TemplateData/style.css">
 
+     <!-- VK SDK -->
+       <script type="text/javascript" src="//api.ok.ru/js/fapi5.js" defer="defer"></script>
+
+    <script type="text/javascript">
+    console.log('FAPI');
+     var rParams = FAPI.Util.getRequestParameters();
+     FAPI.init(rParams["api_server"], rParams["apiconnection"],
+         
+          function() {
+              
+              console.log('Bad');
+              loadRewardedAd();
+              
+          },
+         
+          function(error) {
+              console.log('Good');
+          }
+       );
+
     
+
+
+
+      function loadRewardedAd() {
+      FAPI.UI.loadAd();
+      }
+
      
 
-  
+      function showFullscrenAd(){
+        FAPI.UI.showAd();
+      }
+
+      function showRewardedAd(){
+        FAPI.UI.showLoadedAd().then(data => {
+          console.log('ads ok');
+          unityI.SendMessage('OKSDK', 'RewardGetting');
+          loadRewardedAd();
+          })
+      }
+    </script>
+    
 
   </head>
   <body class="light">
@@ -31,7 +70,7 @@
     </div>
     <div id="unity-fullscreen-button" style="display: none;"></div>
     <script>
-      console.log('number');
+      console.log('number1');
       const hideFullScreenButton = "";
       const buildUrl = "Build";
       const loaderUrl = buildUrl + "/ForBuild.loader.js";
@@ -108,46 +147,7 @@ if (lockFunction.call(window.screen.orientation, 'landscape')) {
       document.body.appendChild(script);
 
     </script>
-     <!-- OK SDK -->
-     <script type="text/javascript"  src="https://api.ok.ru/js/fapi5.js" ></script>
-    <script type="text/javascript">
-
-     var rParams = FAPI.Util.getRequestParameters();
-     FAPI.init(rParams["api_server"], rParams["apiconnection"],
-         
-          function() {
-              
-              console.log('Bad');
-              loadRewardedAd();
-              
-          },
-         
-          function(error) {
-              console.log('Good');
-          }
-);
-
-    
-
-
-
-      function loadRewardedAd() {
-      FAPI.UI.loadAd();
-      }
-
      
-
-      function showFullscrenAd(){
-        FAPI.UI.showAd();
-      }
-
-      function showRewardedAd(){
-        FAPI.UI.showLoadedAd().then(data => {
-          console.log('ads ok');
-          unityI.SendMessage('OKSDK', 'RewardGetting');
-          loadRewardedAd();
-          })
-      }
-    </script>
+    
   </body>
 </html>
