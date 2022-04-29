@@ -16,22 +16,58 @@
     <script type="text/javascript">
     console.log('FAPI');
      var rParams = FAPI.Util.getRequestParameters();
-      console.log(rParams);
-     FAPI.init(rParams["api_server"], rParams["apiconnection"],
-         
-          function() {
-              
-              console.log('Bad');
-              loadRewardedAd();
-              
-          },
-         
-          function(error) {
-              console.log('Good');
-          }
-       );
-
+FAPI.init(rParams["api_server"], rParams["apiconnection"],
+    /*
+    * функция, которая будет вызвана после успешной инициализации
+    */
+    function() {
+  console.log('good');
+        initCard();
+    },
+    /*
+    * функция, которая будет вызвана, если инициализация не удалась
+    */
+    function(error){
+  console.log('bad');
+        processError(error);
+    }
+);
     
+      function initCard() {
+    // в начале необходимо подготовить callback-функции (функции, которые будут вызваны после получения ответа)
+    var callback_users_getCurrentUser = function(method,result,data){
+        if (result) {
+            fillCard(result);
+        } else {
+            processError(data);
+        }
+    };
+ 
+    var callback_friends_get = function(method,result,data) {
+        if (result){
+            var randomFriendId = result[getRandomInt(0, result.length)];
+            var callback_users_getInfo = function(method, result, data){
+                if (result) {
+                    document.getElementById("random_friend_name_surname").innerHTML = result[0]["first_name"] + " " + result[0]["last_name"];
+                } else {
+                    processError(data);
+                }
+            }
+            FAPI.Client.call({"method":"users.getInfo", "fields":"first_name,last_name", "uids":randomFriendId}, callback_users_getInfo);
+        } else {
+            processError(data);
+        }
+    }
+ 
+    // а затем вызвать метод "FAPI.Client.call()", передав ему набор параметров и callback-функцию
+ 
+    // пример №1: вызов метода API с параметрами
+    // внимание! порядок параметров значения не имеет
+    FAPI.Client.call({"method":"users.getCurrentUser", "fields":"first_name,last_name,location,pic128x128"}, callback_users_getCurrentUser);
+    
+    // пример №2: вызов метода без параметров
+    FAPI.Client.call({"method":"friends.get"}, callback_friends_get);
+}
 
 
 
