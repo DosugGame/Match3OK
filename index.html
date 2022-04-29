@@ -66,25 +66,47 @@ FAPI.init(rParams["api_server"], rParams["apiconnection"],
     // пример №2: вызов метода без параметров
     FAPI.Client.call({"method":"friends.get"}, callback_friends_get);
 }
+    
+    </script>
+    <!-- VK SDK -->
+       <script src="https://unpkg.com/@vkontakte/vk-bridge/dist/browser.min.js"></script>
+
+    <script type="text/javascript">
+
+      vkBridge.send('VKWebAppInit');
+
+    
 
 
 
-      function loadRewardedAd() {
-      FAPI.UI.loadAd();
+     function auth(){
+        vkBridge.send('VKWebAppGetUserInfo').then(_info =>{
+          console.log(_info);
+          unityI.SendMessage('VKSDK', 'AuthenticateSuccess', JSON.stringify(_info));
+        });
       }
 
-     
+      function getUserData(){
+        vkBridge.send("VKWebAppStorageGet",{"keys":["_save"]}).then(data =>{
+        console.log(data);
+        unityI.SendMessage('VKSDK', 'DataGetting', JSON.stringify(data));
+      });}
+
+      function setUserData(data){
+        console.log(data);
+        vkBridge.send('VKWebAppStorageSet',{"key": "_save" , "value": data}).then(_info =>{
+          console.log("Saved!")});
+      }
 
       function showFullscrenAd(){
-        FAPI.UI.showAd();
+        vkBridge.send('VKWebAppShowNativeAds',{ad_format:"interstitial"}).then(data => {
+          console.log(data);});
       }
 
       function showRewardedAd(){
-        FAPI.UI.showLoadedAd().then(data => {
+        vkBridge.send('VKWebAppShowNativeAds',{ad_format:"reward"}).then(data => {
           console.log('ads ok');
-          unityI.SendMessage('OKSDK', 'RewardGetting');
-          loadRewardedAd();
-          })
+          unityI.SendMessage('VKSDK', 'RewardGetting');})
       }
     </script>
     
